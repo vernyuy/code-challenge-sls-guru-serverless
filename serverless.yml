@@ -36,27 +36,27 @@ functions:
           path: /{id}
           method: get
           cors: true
-  # deleteItem:
-  #   handler: src/deleteItem.handler
-  #   events:
-  #     - http:
-  #         path: /{id}
-  #         method: delete
-  #         cors: true
-  # updateItem:
-  #   handler: src/updateItem.handler
-  #   events:
-  #     - http:
-  #         path: /{id}
-  #         method: put
-  #         cors: true
-  # listItems:
-  #   handler: src/listItems.handler
-  #   events:
-  #     - http:
-  #         path: /
-  #         method: get
-  #         cors: true
+  deleteItem:
+    handler: src/deleteItem.handler
+    events:
+      - http:
+          path: /{id}
+          method: delete
+          cors: true
+  updateItem:
+    handler: src/updateItem.handler
+    events:
+      - http:
+          path: /{id}
+          method: put
+          cors: true
+  listItems:
+    handler: src/listItems.handler
+    events:
+      - http:
+          path: /
+          method: get
+          cors: true
 
 resources:
   Resources:
