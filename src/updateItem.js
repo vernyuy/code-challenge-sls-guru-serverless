@@ -29,7 +29,7 @@ module.exports.handler = async (event) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({message:"Item updated successfully"}),
     };
   } catch (err) {
     console.log(err);
