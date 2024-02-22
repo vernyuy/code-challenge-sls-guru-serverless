@@ -23,7 +23,7 @@ custom:
 
 functions:
   api:
-    handler: createItem.handler
+    handler: test.handler
     events:
       - http:
           path: /
