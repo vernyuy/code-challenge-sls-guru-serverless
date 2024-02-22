@@ -2,7 +2,7 @@
 const AWS = require('aws-sdk');
 const docClient = new AWS.DynamoDB.DocumentClient();
 const uuid = require('uuid');
-const TABLE_NAME = process.env.TABLE_NAME;
+const TABLE_NAME = process.env.DYNAMODB_WEATHER_TABLE;
 
 
 module.exports.handler = async (event) => {
