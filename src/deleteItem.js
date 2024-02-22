@@ -3,6 +3,7 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.DYNAMODB_WEATHER_TABLE;
 
 module.exports.handler = async (event) => {
+  //   Get item by id from dynamodb table
   const { id } = event.pathParameters;
 
   const params = {
@@ -11,16 +12,16 @@ module.exports.handler = async (event) => {
       id: id,
     },
   };
-  try{
-    const data = await docClient.get(params).promise();
-    return {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data.Item),
-    };
-  }catch(err){
-    console.log(err);
-  }
+
+  await docClient.delete(params).promise();
+
+  return {
+    statusCode: 200,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      message: "Item deleted successfully",
+    }),
+  };
 };
