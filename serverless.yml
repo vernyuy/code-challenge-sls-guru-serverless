@@ -17,9 +17,13 @@ provider:
         - dynamodb:DeleteItem
       Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:service}-${sls:stage}-weather
 
+custom:
+  esbuild:
+    exclude: []
+
 functions:
   api:
-    handler: src/createItem.handler
+    handler: createItem.handler
     events:
       - http:
           path: /
