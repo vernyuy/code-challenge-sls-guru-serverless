@@ -23,7 +23,7 @@ module.exports.handler = async (event) => {
     ReturnValues: "UPDATED_NEW",
   };
   try {
-    const data = await docClient.update(params).promise();
+    await docClient.update(params).promise();
     return {
       statusCode: 200,
       headers: {

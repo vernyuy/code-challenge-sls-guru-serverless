@@ -14,7 +14,7 @@ module.exports.handler = async (event) => {
   };
 
   try {
-    const data = await docClient.delete(params).promise();
+    await docClient.delete(params).promise();
     return {
       statusCode: 200,
       headers: {
