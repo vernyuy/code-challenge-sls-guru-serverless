@@ -10,9 +10,12 @@ module.exports.handler = async (event) => {
     Key: {
         id: event.pathParameters.id,
     },
-    UpdateExpression: "set weather = :weather",
+    UpdateExpression: "set weather = :weather ",
     ExpressionAttributeValues: {
-        ":weather": event.body
+        ":weather": event.body.weather,
+        ":town": event.body.town,
+        ":country": event.body.country,
+        ":temperature": event.body.temperature,
     },
     ReturnValues: "UPDATED_NEW",
 }
@@ -23,7 +26,7 @@ module.exports.handler = async (event) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data.Item),
+      body: JSON.stringify(data),
     };
   }catch(err){
     console.log(err);
