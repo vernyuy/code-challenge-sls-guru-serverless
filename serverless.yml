@@ -19,7 +19,7 @@ provider:
 
 functions:
   api:
-    handler: createItem.handler
+    handler: src/createItem.handler
     events:
       - http:
           path: /
