@@ -19,11 +19,11 @@ provider:
 
 functions:
   api:
-    handler: index.handler
+    handler: src/createItem.handler
     events:
       - http:
           path: /
-          method: get
+          method: post
           cors: true
           
 
