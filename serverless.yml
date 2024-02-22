@@ -21,9 +21,11 @@ functions:
   api:
     handler: index.handler
     events:
-      - httpApi:
+      - http:
           path: /
           method: get
+          cors: true
+          
 
 resources:
   Resources:
