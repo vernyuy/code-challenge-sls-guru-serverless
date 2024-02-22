@@ -1,7 +1,5 @@
-org: fonchu
-app: crud-rest-api
+
 service: aws-node-http-api-project
-frameworkVersion: '3'
 
 provider:
   name: aws
