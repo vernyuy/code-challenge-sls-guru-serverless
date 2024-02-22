@@ -13,16 +13,24 @@ module.exports.handler = async (event) => {
     },
   };
 
- try{
+  try {
     const data = await docClient.delete(params).promise();
-  return {
-    statusCode: 200,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  };
- }catch(err){
+    return {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: "Item deleted successfully",
+      }),
+    };
+  } catch (err) {
     console.log(err);
- }
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: err,
+      }),
+    };
+  }
 };

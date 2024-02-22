@@ -11,7 +11,7 @@ module.exports.handler = async (event) => {
       id: id,
     },
   };
-  try{
+  try {
     const data = await docClient.get(params).promise();
     return {
       statusCode: 200,
@@ -20,7 +20,7 @@ module.exports.handler = async (event) => {
       },
       body: JSON.stringify(data.Item),
     };
-  }catch(err){
+  } catch (err) {
     console.log(err);
   }
 };

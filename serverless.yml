@@ -24,6 +24,9 @@ custom:
 functions:
   createItem:
     handler: src/createItem.handler
+    name: ${self:service}-${sls:stage}-createItem
+    timeout: 30
+    memorySize: 128
     events:
       - http:
           path: /
@@ -31,6 +34,9 @@ functions:
           cors: true
   getItem:
     handler: src/getItem.handler
+    name: ${self:service}-${sls:stage}-getItem
+    timeout: 30
+    memorySize: 128
     events:
       - http:
           path: /{id}
@@ -38,6 +44,9 @@ functions:
           cors: true
   deleteItem:
     handler: src/deleteItem.handler
+    name: ${self:service}-${sls:stage}-deleteItem
+    timeout: 30
+    memorySize: 128
     events:
       - http:
           path: /{id}
@@ -45,6 +54,9 @@ functions:
           cors: true
   updateItem:
     handler: src/updateItem.handler
+    name: ${self:service}-${sls:stage}-updateItem
+    timeout: 30
+    memorySize: 128
     events:
       - http:
           path: /{id}
@@ -52,6 +64,9 @@ functions:
           cors: true
   listItems:
     handler: src/listItems.handler
+    name: ${self:service}-${sls:stage}-listItems
+    timeout: 30
+    memorySize: 128
     events:
       - http:
           path: /
@@ -87,9 +102,3 @@ resources:
             Value: ${self:service}-${sls:stage}-weather
           - Key: Stage
             Value: ${sls:stage}
-          - Key: Service
-            Value: ${self:service}
-          - Key: Project
-            Value: aws-node-http-api-project
-          - Key: Owner
-            Value: fon

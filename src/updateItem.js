@@ -3,23 +3,26 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.DYNAMODB_WEATHER_TABLE;
 
 module.exports.handler = async (event) => {
-  // update item in dynamodb
+  const weather = JSON.parse(event["body"]).weather;
+  const town = JSON.parse(event["body"]).town;
+  const ctry = JSON.parse(event["body"]).country;
+  const temp = JSON.parse(event["body"]).temperature;
 
   const params = {
     TableName: TABLE_NAME,
     Key: {
-        id: event.pathParameters.id,
+      id: event.pathParameters.id,
     },
-    UpdateExpression: "set weather = :weather ",
+    UpdateExpression: "set weather = :weather",
     ExpressionAttributeValues: {
-        ":weather": event.body.weather,
-        ":town": event.body.town,
-        ":country": event.body.country,
-        ":temperature": event.body.temperature,
+      ":weather": weather,
+      ":town": town,
+      ":country": ctry,
+      ":temperature": temp,
     },
     ReturnValues: "UPDATED_NEW",
-}
-  try{
+  };
+  try {
     const data = await docClient.update(params).promise();
     return {
       statusCode: 200,
@@ -28,7 +31,7 @@ module.exports.handler = async (event) => {
       },
       body: JSON.stringify(data),
     };
-  }catch(err){
+  } catch (err) {
     console.log(err);
   }
 };

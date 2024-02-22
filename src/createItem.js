@@ -1,9 +1,8 @@
-'use strict'
-const AWS = require('aws-sdk');
+"use strict";
+const AWS = require("aws-sdk");
 const docClient = new AWS.DynamoDB.DocumentClient();
-const uuid = require('uuid');
+const uuid = require("uuid");
 const TABLE_NAME = process.env.DYNAMODB_WEATHER_TABLE;
-
 
 module.exports.handler = async (event) => {
   console.log(event);
@@ -12,19 +11,29 @@ module.exports.handler = async (event) => {
     TableName: TABLE_NAME,
     Item: {
       id: uuid.v4(),
-      ...data
-    }
-  };
-  
-  await docClient.put(params).promise();
-
-  return {
-    statusCode: 200,
-    headers: {
-      'Content-Type': 'application/json'
+      ...data,
     },
-    body: JSON.stringify({
-      message: 'Item inserted successfully'
-    })
   };
+
+  try {
+    await docClient.put(params).promise();
+
+    return {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: "Item inserted successfully",
+      }),
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: err,
+      }),
+    };
+  }
 };
