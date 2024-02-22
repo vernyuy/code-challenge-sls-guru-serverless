@@ -1,0 +1,64 @@
+org: fonchu
+app: crud-rest-api
+service: aws-node-http-api-project
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  environment:
+    DYNAMODB_WEATHER_TABLE: ${self:service}-${sls:stage}-weather
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:service}-${sls:stage}-weather
+
+functions:
+  api:
+    handler: index.handler
+    events:
+      - httpApi:
+          path: /
+          method: get
+
+resources:
+  Resources:
+    WeatherTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${sls:stage}-weather
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
+        SSESpecification:
+          SSEEnabled: true
+          SSEType: KMS
+          KMSMasterKeyId: alias/aws/dynamodb
+        Tags:
+          - Key: Name
+            Value: ${self:service}-${sls:stage}-weather
+          - Key: Stage
+            Value: ${sls:stage}
+          - Key: Service
+            Value: ${self:service}
+          - Key: Project
+            Value: aws-node-http-api-project
+          - Key: Owner
+            Value: fon
