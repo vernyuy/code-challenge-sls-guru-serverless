@@ -4,7 +4,6 @@ service: aws-node-http-api-project
 provider:
   name: aws
   runtime: nodejs18.x
-  stage: dev
   
   environment:
     DYNAMODB_WEATHER_TABLE: ${self:service}-${sls:stage}-weather
