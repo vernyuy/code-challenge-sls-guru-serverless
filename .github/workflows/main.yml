@@ -3,12 +3,12 @@ name: Deploy master branch
 on:
   push:
     branches:
-      - master
+      - prod
       - dev
 
 jobs:
   deploy-dev:
-    if: startsWith(github.ref, 'refs/heads/master')
+    if: startsWith(github.ref, 'refs/heads/dev')
     name: deploy
     runs-on: ubuntu-latest
     strategy:
