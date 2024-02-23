@@ -1,11 +1,23 @@
 
 service: aws-node-http-api-project
 
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  settings:
+    dev:
+      tableName: weather-${self:custom.stage}
+    prod:
+      tableName: weather-prod
+  esbuild:
+    exclude: []
+
 provider:
   name: aws
   runtime: nodejs18.x
+  stage: dev
+  
   environment:
-    DYNAMODB_WEATHER_TABLE: ${self:service}-${sls:stage}-weather
+    DYNAMODB_WEATHER_TABLE: ${self:custom.settings.${self:custom.stage}}-weather
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -15,16 +27,14 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:service}-${sls:stage}-weather
+      Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:custom.settings.${self:custom.stage}}-weather
 
-custom:
-  esbuild:
-    exclude: []
+
 
 functions:
   createItem:
     handler: src/createItem.handler
-    name: ${self:service}-${sls:stage}-createItem
+    name: ${self:custom.settings.${self:custom.stage}}-createItem
     timeout: 30
     memorySize: 128
     events:
@@ -34,7 +44,7 @@ functions:
           cors: true
   getItem:
     handler: src/getItem.handler
-    name: ${self:service}-${sls:stage}-getItem
+    name: ${self:custom.settings.${self:custom.stage}}-getItem
     timeout: 30
     memorySize: 128
     events:
@@ -44,7 +54,7 @@ functions:
           cors: true
   deleteItem:
     handler: src/deleteItem.handler
-    name: ${self:service}-${sls:stage}-deleteItem
+    name: ${self:custom.settings.${self:custom.stage}}-deleteItem
     timeout: 30
     memorySize: 128
     events:
@@ -54,7 +64,7 @@ functions:
           cors: true
   updateItem:
     handler: src/updateItem.handler
-    name: ${self:service}-${sls:stage}-updateItem
+    name: ${self:custom.settings.${self:custom.stage}}-updateItem
     timeout: 30
     memorySize: 128
     events:
@@ -64,7 +74,7 @@ functions:
           cors: true
   listItems:
     handler: src/listItems.handler
-    name: ${self:service}-${sls:stage}-listItems
+    name: ${self:custom.settings.${self:custom.stage}}-listItems
     timeout: 30
     memorySize: 128
     events:
@@ -78,7 +88,7 @@ resources:
     WeatherTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:service}-${sls:stage}-weather
+        TableName: ${self:custom.settings.${self:custom.stage}}-weather
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
@@ -99,6 +109,6 @@ resources:
           KMSMasterKeyId: alias/aws/dynamodb
         Tags:
           - Key: Name
-            Value: ${self:service}-${sls:stage}-weather
+            Value: ${self:custom.settings.${self:custom.stage}}-weather
           - Key: Stage
             Value: ${sls:stage}
