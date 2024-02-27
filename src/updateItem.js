@@ -13,7 +13,7 @@ module.exports.handler = async (event) => {
     Key: {
       id: event.pathParameters.id,
     },
-    UpdateExpression: "set weather = :weather",
+    UpdateExpression: "set weather = :weather, town = :town, country = :country",
     ExpressionAttributeValues: {
       ":weather": weather,
       ":town": town,

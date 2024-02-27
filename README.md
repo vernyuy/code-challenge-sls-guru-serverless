@@ -1,92 +1,187 @@
-<!--
-title: 'AWS Simple HTTP Endpoint example in NodeJS'
-description: 'This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.'
-layout: Doc
-framework: v3
-platform: AWS
-language: nodeJS
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
+# Serverless framework CRUDL API.
 
-# Serverless Framework Node HTTP API on AWS
+This project is a CRUDL api that inserts and retrieves data from AWS Dynamodb. The system is built using `serverless framework` as the IaC framework, `Node Js` as the technology and `Javascript` as the programming language.
 
-This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.
+- C: Create
+- R: Read
+- U: Update
+- D: Delete
+- L: List
 
-This template does not include any kind of persistence (database). For more advanced examples, check out the [serverless/examples repository](https://github.com/serverless/examples/) which includes Typescript, Mongo, DynamoDB and other examples.
+## Installation
 
-## Usage
+To run this project, clone the repository, open it in your favourite IDE (vs-code for its simplicity). open the terminal in the root directory of your project and run `npm install` to install the required dependencies.
 
-### Deployment
+At this point, you can choose either to push to github for your CICD or to directly deploy to your AWS account using `sls deploy --stage {stageName}`
 
-```
-$ serverless deploy
-```
+## AWS Services Used
 
-After deploying, you should see output similar to:
+- `ApiGateway`
+- `Lambda fnctions`
+- `Dynmodb`
 
-```bash
-Deploying aws-node-http-api-project to stage dev (us-east-1)
+## The project's stack
 
-✔ Service deployed to stack aws-node-http-api-project-dev (152s)
+The `serverless.yml` file found at the root directory of the project is used to define and provission AWS services needed this project.
 
-endpoint: GET - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/
-functions:
-  hello: aws-node-http-api-project-dev-hello (1.9 kB)
-```
+The stack contains 5 lambda functions that are invoked by api gateway event with different http methods and routes.
 
-_Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [http event docs](https://www.serverless.com/framework/docs/providers/aws/events/apigateway/).
+The stack also defines a dynamodb table resource where data is being persisted.
 
-### Invocation
+## How it works
 
-After successful deployment, you can call the created application via HTTP:
+The system consist of 5 lambda functions that can also be called `lambda proxy` where each is responsible to perform a specific `http method`.
 
-```bash
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/
-```
+**Http Methods incloud:**
 
-Which should result in response similar to the following (removed `input` content for brevity):
+- GET
+- POST
+- PUT
+- DELETE
+
+### 1. **CreateItem Lambda:**
+
+The `createItem` lambda function is invoked by an api gateway event with http method **POST** and the request payload contains the required data needed to be stored in the dynamodb table.
+
+The lambda picks the the item data from the request body, generates a unique key for that item and inserts the final data into the dynamodb table.
+
+**Sample Request**
+
+httpMethod POST
+
+request url: https://randdomKey.execute-api.region.amazonaws.com/dev/
+
+request body:
 
 ```json
 {
-  "message": "Go Serverless v2.0! Your function executed successfully!",
-  "input": {
-    ...
+  "country": "Cameroon",
+  "town": "Douala",
+  "weather": "Rainy",
+  "temperature": "21 deg"
+}
+```
+
+response
+
+```json
+{
+  "statusCode": 200,
+  "message": "Item inserted successfully"
+}
+```
+
+### 2. **GetItem Lambda:**
+
+The `GetItem` lambda function is invoked by an api gateway event with http method **GET** and the request payload contains the required data needed to be stored in the dynamodb table.
+
+The lambda picks the item's key is provided by the user as a `pathParameter`. The lambda function extracts the item's key from the `pathParameter` and issue a get item request from the dynamodb table.
+
+**Sample Request**  
+
+httpMethod GET
+
+request url: https://randdomKey.execute-api.region.amazonaws.com/dev/{item's key}
+
+response
+
+```json
+{
+  "item": {
+    "id": "ef2167de-d5ca-4d95-87cf-f776af09eeb3",
+    "temperature": "21 deg",
+    "country": "Cameroon",
+    "weather": "Rainy",
+    "town": "Douala"
   }
 }
 ```
 
-### Local development
+### 3. **DeleteItem Lambda:**
 
-You can invoke your function locally by using the following command:
+The `DeleteItem` lambda function is invoked by an api gateway event with http method **DELETE** and the request payload contains the required data needed to remove an item from the dynamodb table.
 
-```bash
-serverless invoke local --function hello
-```
+The user provides the item's key as a `pathParameter`. The lambda function extracts the item's key from the `pathParameter` and issue a delete item request from the dynamodb table.
 
-Which should result in response similar to the following:
+**Sample Request**
 
-```
+httpMethod: **DELETE**
+
+request url: https://randdomKey.execute-api.region.amazonaws.com/dev/{item's key}
+
+response
+
+```json
 {
-  "statusCode": 200,
-  "body": "{\n  \"message\": \"Go Serverless v3.0! Your function executed successfully!\",\n  \"input\": \"\"\n}"
+  "message": "Item deleted successfully"
 }
 ```
 
+### 4. **UpdateItem Lambda:**
 
-Alternatively, it is also possible to emulate API Gateway and Lambda locally by using `serverless-offline` plugin. In order to do that, execute the following command:
+The `UpdateItem` lambda function is invoked by an api gateway event with http method **PUT** and the request payload contains the required data needed to remove an item from the dynamodb table.
 
-```bash
-serverless plugin install -n serverless-offline
+The user provides the item's key as a `pathParameter` and provides the items attributes with their values in the request body. The lambda function extracts the item's key from the `pathParameter`, the items data from the request body and issue an update item request to the dynamodb table.
+
+**Sample Request**
+
+httpMethod: **PUT**
+
+request url: https://randdomKey.execute-api.region.amazonaws.com/dev/{item's key}
+
+**Request body:**
+
+```json
+{
+  "temperature": "<new value>",
+  "country": "<new value>",
+  "weather": "<new value>",
+  "town": "Cape Town"
+}
 ```
 
-It will add the `serverless-offline` plugin to `devDependencies` in `package.json` file as well as will add it to `plugins` in `serverless.yml`.
+Feel free to change the values of any attribute.
 
-After installation, you can start local emulation with:
+**Response**
 
+```json
+{
+  "message": "Item updated successfully"
+}
 ```
-serverless offline
-```
 
-To learn more about the capabilities of `serverless-offline`, please refer to its [GitHub repository](https://github.com/dherault/serverless-offline).
+### 5. **ListItems Lambda:**
+
+The `ListItems` lambda function is invoked by an api gateway event with http method **GET** and it retrieves all the items found in the dynamodb table provided the limit size of the **1mb** is not exceeded using the **scan** method
+
+**Sample Request**
+
+httpMethod: **GET**
+
+request url: https://randdomKey.execute-api.region.amazonaws.com/dev/
+
+
+Feel free to change the values of any attribute.
+
+**Response**
+
+```json
+{
+    "items": [
+        {
+            "id": "dd166e7a-64fa-44be-90d9-1e8d549a4bc9",
+            "temperature": "21 deg",
+            "country": "Cameroon",
+            "weather": "Sunny",
+            "town": "Douala"
+        },
+        {
+            "id": "ef2167de-d5ca-4d95-87cf-f776af09eeb3",
+            "temperature": "21 deg",
+            "country": "Cameroon",
+            "weather": "Rainy",
+            "town": "Buea"
+        }
+    ]
+}
+```
